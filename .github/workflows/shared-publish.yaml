@@ -2,19 +2,17 @@ name: Publish (Shared)
 
 on:
   workflow_call:
-    inputs:
-      ci_docker_image_name:
-        required: true
-        type: string
-      ci_gcp_service_name:
-        required: true
-        type: string
 
 permissions:
   id-token: write # Required for OIDC authentication (workload identity provider)
   contents: read # Required to read the repo content
 
 env:
+  # repository vars
+  TF_SA_DOCKER_IMAGE_NAME: ${{ vars.TF_SA_DOCKER_IMAGE_NAME }}
+  TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME: ${{ vars.TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME }}
+
+  # repository secrets
   TF_SA_DOCKER_REGISTRY: ${{ secrets.TF_SA_DOCKER_REGISTRY }}
   TF_SA_DOCKER_ID: ${{ secrets.TF_SA_DOCKER_ID }}
   TF_SA_DOCKER_PASSWORD: ${{ secrets.TF_SA_DOCKER_PASSWORD }}
@@ -33,9 +31,6 @@ jobs:
   publish:
     name: Pubish
     runs-on: ubuntu-22.04
-    env:
-      CI_DOCKER_IMAGE_NAME: ${{ inputs.ci_docker_image_name }}
-      CI_GCP_SERVICE_NAME: ${{ inputs.ci_gcp_service_name }}
 
     steps:
       - name: Checkout

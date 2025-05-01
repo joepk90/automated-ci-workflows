@@ -20,7 +20,4 @@ jobs:
   publish:
     name: Publish
     uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-publish.yaml@ci-updates"
-    with:
-      ci_docker_image_name: "hello-world-example"
-      ci_gcp_service_name: "hello-world-example"
     secrets: inherit
