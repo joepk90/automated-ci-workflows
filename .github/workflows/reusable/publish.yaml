@@ -1,0 +1,54 @@
+name: Publish (Shared)
+
+on:
+  workflow_call:
+
+permissions:
+  id-token: write # Required for OIDC authentication (workload identity provider)
+  contents: read # Required to read the repo content
+
+env:
+  CI_GCP_SERVICE_NAME: ${{ secrets.CI_GCP_SERVICE_NAME }}
+  CI_DOCKER_IMAGE_NAME: ${{ secrets.CI_DOCKER_IMAGE_NAME }}
+  TF_SA_DOCKER_REGISTRY: ${{ secrets.TF_SA_DOCKER_REGISTRY }}
+  TF_SA_DOCKER_ID: ${{ secrets.TF_SA_DOCKER_ID }}
+  TF_SA_DOCKER_PASSWORD: ${{ secrets.TF_SA_DOCKER_PASSWORD }}
+  TF_SA_GOOGLE_PROJECT_ID: ${{ secrets.TF_SA_GOOGLE_PROJECT_ID }}
+  TF_SA_GOOGLE_PROJECT_NUMBER: ${{ secrets.TF_SA_GOOGLE_PROJECT_NUMBER }}
+  TF_SA_GOOGLE_WORKLOAD_IDENTITY_POOL_ID: ${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_POOL_ID }}
+  TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+  TF_SA_GOOGLE_SERVICE_ACCOUNT_EMAIL_USER_NAME: ${{ secrets.TF_SA_GOOGLE_SERVICE_ACCOUNT_EMAIL_USER_NAME }}
+  COMMIT_SHA: ${{ github.sha }}
+
+  # constuctured env vars (from secrets)
+  WORKLOAD_IDENTITY_PROVIDER: "projects/${{ secrets.TF_SA_GOOGLE_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}"
+  SERVICE_ACCOUNT_EMAIL: "${{ secrets.TF_SA_GOOGLE_SERVICE_ACCOUNT_EMAIL_USER_NAME }}@${{ secrets.TF_SA_GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
+
+jobs:
+  publish:
+    name: Pubish
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Docker Build
+        run: make ci-docker-build
+
+      - name: Docker Push
+        run: make ci-docker-push
+
+      - id: "auth"
+        name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: "${{ env.TF_SA_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.TF_SA_SERVICE_ACCOUNT_EMAIL }}"
+          token_format: "access_token"
+
+      - name: Check/Create Artifact Registry Repository
+        run: make ci-check-create-repository
+
+      - name: GCR Push
+        run: make ci-gcr-push

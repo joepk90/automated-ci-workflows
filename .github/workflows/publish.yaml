@@ -1,0 +1,17 @@
+name: Publish
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+  # if testing is required (create branch called ci-updates)
+  # push:
+  #   branches:
+  #     - ci-updates
+
+jobs:
+  publish:
+    uses: org/shared-repo/.github/workflows/publish.yml@main
