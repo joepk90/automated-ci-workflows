@@ -16,15 +16,11 @@ permissions:
   id-token: write # Required for OIDC authentication (workload identity provider)
   contents: read # Required to read the repo content
 
-env:
-  CI_DOCKER_IMAGE_NAME: "hello-world-example"
-  CI_GCP_SERVICE_NAME: "hello-world-example"
-
 jobs:
   publish:
     name: Publish
     uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-publish.yaml@main"
     with:
-      ci_docker_image_name: ${{ env.CI_DOCKER_IMAGE_NAME }}
-      ci_gcp_service_name: ${{ env.CI_GCP_SERVICE_NAME }}
+      ci_docker_image_name: "hello-world-example"
+      ci_gcp_service_name: "hello-world-example"
     secrets: inherit
