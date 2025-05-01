@@ -51,8 +51,8 @@ jobs:
         name: "Authenticate to Google Cloud"
         uses: "google-github-actions/auth@v2"
         with:
-          workload_identity_provider: "${{ env.TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.TF_SA_SERVICE_ACCOUNT_EMAIL }}"
+          workload_identity_provider: "${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.SERVICE_ACCOUNT_EMAIL }}"
           token_format: "access_token"
 
       - name: Check/Create Artifact Registry Repository
