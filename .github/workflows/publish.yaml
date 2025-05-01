@@ -18,9 +18,13 @@ permissions:
 
 env:
   CI_DOCKER_IMAGE_NAME: "hello-world-example"
+  CI_GCP_SERVICE_NAME: "hello-world-example"
 
 jobs:
   publish:
     name: Publish
     uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-publish.yaml@main"
+    with:
+      ci_docker_image_name: ${{ env.CI_DOCKER_IMAGE_NAME }}
+      ci_gcp_service_name: ${{ env.CI_GCP_SERVICE_NAME }}
     secrets: inherit
