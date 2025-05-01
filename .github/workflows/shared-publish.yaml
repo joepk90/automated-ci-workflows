@@ -2,6 +2,13 @@ name: Publish (Shared)
 
 on:
   workflow_call:
+    inputs:
+      ci_docker_image_name:
+        required: true
+        type: string
+      ci_gcp_service_name:
+        required: true
+        type: string
 
 permissions:
   id-token: write # Required for OIDC authentication (workload identity provider)
