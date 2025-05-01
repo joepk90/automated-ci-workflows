@@ -16,6 +16,9 @@ permissions:
   id-token: write # Required for OIDC authentication (workload identity provider)
   contents: read # Required to read the repo content
 
+env:
+  CI_DOCKER_IMAGE_NAME: "hello-world-example"
+
 jobs:
   publish:
     name: Publish
