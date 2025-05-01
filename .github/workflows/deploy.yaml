@@ -17,7 +17,7 @@ permissions:
   contents: read # Required to read the repo content
 
 jobs:
-  publish:
+  deploy:
     name: Deploy
     uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@ci-updates"
     secrets: inherit
