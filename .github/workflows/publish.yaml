@@ -12,6 +12,10 @@ on:
     branches:
       - ci-updates
 
+permissions:
+  id-token: write # Required for OIDC authentication (workload identity provider)
+  contents: read # Required to read the repo content
+
 jobs:
   publish:
     name: Publish
