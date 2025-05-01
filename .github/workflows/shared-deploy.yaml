@@ -29,6 +29,7 @@ env:
 
   # duplicate varaible
   TF_SA_LATEST_TAG: "latest"
+  TF_SA_MAKEFILE_URL: "https://raw.githubusercontent.com/joepk90/serverless-apps-ci-workflows/main/Makefile"
 
 jobs:
   deploy:
@@ -38,6 +39,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Download Makefile from - serverless-apps-ci-workflows
+        run: |
+          curl -L -o Makefile ${{ env.TF_SA_MAKEFILE_URL }}
 
       - name: "Authenticate to Google Cloud"
         id: "auth"

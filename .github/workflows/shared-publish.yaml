@@ -27,6 +27,8 @@ env:
   WORKLOAD_IDENTITY_PROVIDER: "projects/${{ secrets.TF_SA_GOOGLE_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}"
   SERVICE_ACCOUNT_EMAIL: "${{ secrets.TF_SA_GOOGLE_SERVICE_ACCOUNT_EMAIL_USER_NAME }}@${{ secrets.TF_SA_GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
 
+  TF_SA_MAKEFILE_URL: "https://raw.githubusercontent.com/joepk90/serverless-apps-ci-workflows/main/Makefile"
+
 jobs:
   publish:
     name: Pubish
@@ -35,6 +37,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Download Makefile from - serverless-apps-ci-workflows
+        run: |
+          curl -L -o Makefile ${{ env.TF_SA_MAKEFILE_URL }}
 
       - name: Docker Build
         run: make ci-docker-build
