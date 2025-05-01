@@ -1,0 +1,23 @@
+name: Deploy
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+  # if testing is required (create branch called ci-updates)
+  # push:
+  #   branches:
+  #     - ci-updates
+
+permissions:
+  id-token: write # Required for OIDC authentication (workload identity provider)
+  contents: read # Required to read the repo content
+
+jobs:
+  publish:
+    name: Deploy
+    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@ci-updates"
+    secrets: inherit
