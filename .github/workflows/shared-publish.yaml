@@ -8,8 +8,11 @@ permissions:
   contents: read # Required to read the repo content
 
 env:
-  CI_GCP_SERVICE_NAME: ${{ secrets.CI_GCP_SERVICE_NAME }}
-  CI_DOCKER_IMAGE_NAME: ${{ secrets.CI_DOCKER_IMAGE_NAME }}
+  # repository vars
+  TF_SA_DOCKER_IMAGE_NAME: ${{ vars.TF_SA_DOCKER_IMAGE_NAME }}
+  TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME: ${{ vars.TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME }}
+
+  # repository secrets
   TF_SA_DOCKER_REGISTRY: ${{ secrets.TF_SA_DOCKER_REGISTRY }}
   TF_SA_DOCKER_ID: ${{ secrets.TF_SA_DOCKER_ID }}
   TF_SA_DOCKER_PASSWORD: ${{ secrets.TF_SA_DOCKER_PASSWORD }}
@@ -43,8 +46,8 @@ jobs:
         name: "Authenticate to Google Cloud"
         uses: "google-github-actions/auth@v2"
         with:
-          workload_identity_provider: "${{ env.TF_SA_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.TF_SA_SERVICE_ACCOUNT_EMAIL }}"
+          workload_identity_provider: "${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.SERVICE_ACCOUNT_EMAIL }}"
           token_format: "access_token"
 
       - name: Check/Create Artifact Registry Repository

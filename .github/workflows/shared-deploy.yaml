@@ -7,11 +7,12 @@ permissions:
   id-token: write # Required for OIDC authentication (workload identity provider)
   contents: read # Required to read the repo content
 
-# CI_DOCKER_IMAGE_NAME set dynamically
-
 env:
-  CI_GCP_SERVICE_NAME: ${{ secrets.CI_GCP_SERVICE_NAME }}
-  CI_DOCKER_IMAGE_NAME: ${{ secrets.CI_DOCKER_IMAGE_NAME }}
+  # repository vars
+  TF_SA_DOCKER_IMAGE_NAME: ${{ vars.TF_SA_DOCKER_IMAGE_NAME }}
+  TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME: ${{ vars.TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME }}
+
+  # repository secrets
   TF_SA_DOCKER_REGISTRY: ${{ secrets.TF_SA_DOCKER_REGISTRY }}
   TF_SA_DOCKER_ID: ${{ secrets.TF_SA_DOCKER_ID }}
   TF_SA_DOCKER_PASSWORD: ${{ secrets.TF_SA_DOCKER_PASSWORD }}
@@ -26,10 +27,12 @@ env:
   WORKLOAD_IDENTITY_PROVIDER: "projects/${{ secrets.TF_SA_GOOGLE_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}"
   SERVICE_ACCOUNT_EMAIL: "${{ secrets.TF_SA_GOOGLE_SERVICE_ACCOUNT_EMAIL_USER_NAME }}@${{ secrets.TF_SA_GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
 
+  # duplicate varaible
+  TF_SA_LATEST_TAG: "latest"
+
 jobs:
-  deploy-staging:
+  deploy:
     name: Deployment
-    needs: publish
     runs-on: ubuntu-22.04
 
     steps:
@@ -40,16 +43,16 @@ jobs:
         id: "auth"
         uses: "google-github-actions/auth@v2"
         with:
-          workload_identity_provider: "${{ env.TF_SA_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.TF_SA_SERVICE_ACCOUNT_EMAIL }}"
+          workload_identity_provider: "${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.SERVICE_ACCOUNT_EMAIL }}"
           token_format: "access_token"
 
       - name: Deploy
         id: deploy
         uses: "google-github-actions/deploy-cloudrun@v2"
         with:
-          service: "${{ env.CI_GCP_SERVICE_NAME }}"
-          image: "us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT_ID }}/containers/${{ env.GOOGLE_PROJECT_ID }}:${{ env.CI_DOCKER_IMAGE_NAME}}"
+          service: "${{ env.TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME }}"
+          image: "us-central1-docker.pkg.dev/${{ env.TF_SA_GOOGLE_PROJECT_ID }}/containers/${{ env.TF_SA_DOCKER_IMAGE_NAME }}:${{ env.TF_SA_LATEST_TAG }}"
           region: "us-central1"
           project_id: ${{ env.TF_SA_GOOGLE_PROJECT_ID }}
 

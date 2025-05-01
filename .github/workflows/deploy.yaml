@@ -1,4 +1,4 @@
-name: Publish
+name: Deploy
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ permissions:
   contents: read # Required to read the repo content
 
 jobs:
-  publish:
-    name: Publish
-    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-publish.yaml@ci-updates"
+  deploy:
+    name: Deploy
+    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@ci-updates"
     secrets: inherit
