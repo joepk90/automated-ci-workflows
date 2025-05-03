@@ -6,7 +6,14 @@ local-docker-run:
 	docker run -p 8080:8080 $(LOCAL_DOCKER_IMAGE_NAME)
 
 
+# REPO VARS
+# TF_SA_DOCKER_IMAGE_NAME
 
+# REPO SECRETS
+# TF_SA_DOCKER_ID
+# TF_SA_DOCKER_PASSWORD
+# TF_SA_DOCKER_REGISTRY
+# TF_SA_GOOGLE_PROJECT_ID
 
 ### CI VARS
 TF_SA_GOOGLE_AR_REPO_LOCATION=us-central1
@@ -24,31 +31,33 @@ ci-docker-auth:
 	@docker login -u $(TF_SA_DOCKER_ID) -p $(TF_SA_DOCKER_PASSWORD)
 
 ci-docker-build:
-	# docker build -t $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA) ./
-	docker build -t $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG) ./
-	# @echo "Created new tagged image: $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)"
-	@echo "Created new tagged image: $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)"
+	docker build -t $(TF_SA_DOCKER_REPOSITORY) ./
+	@echo "Created new image: $(TF_SA_DOCKER_REPOSITORY)"
 
-ci-gcr-build:
-	# docker build -t $(TF_SA_GOOGLE_REPOSITORY):$(COMMIT_SHA) ./
-	docker build -t ${TF_SA_GOOGLE_REPOSITORY}:$(TF_SA_LATEST_TAG) ./
-	# @echo "Created new tagged image: $(TF_SA_GOOGLE_REPOSITORY):$(COMMIT_SHA)"
-	@echo "Created new tagged image: $(TF_SA_GOOGLE_REPOSITORY):$(TF_SA_LATEST_TAG)"
+ci-docker-tag:
+	docker tag $(TF_SA_DOCKER_REPOSITORY) $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)
+	docker tag $(TF_SA_DOCKER_REPOSITORY) $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)
+	@echo "Created new tagged image: $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)"
+	@echo "Created new tagged image: $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)"
 
 ci-docker-push: ci-docker-auth
-	# docker push $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)
+	docker push $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)
 	docker push $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)
-	# @echo "Deployed tagged image: $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)"
+	@echo "Deployed tagged image: $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)"
 	@echo "Deployed tagged image: $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)"
+
+# we only use latest for GCP because storing images in the artifact registry isn't free
+ci-gcr-tag:
+	docker tag $(TF_SA_DOCKER_REPOSITORY) $(TF_SA_GOOGLE_REPOSITORY):$(TF_SA_LATEST_TAG)
+	@echo "Created new tagged image: $(TF_SA_GOOGLE_REPOSITORY):$(TF_SA_LATEST_TAG)"
+
+ci-gcr-push: ci-gcloud-configure-docker ci-docker-build
+	docker push ${TF_SA_GOOGLE_REPOSITORY}:$(TF_SA_LATEST_TAG)
+	@echo "Deployed tagged image: $(TF_SA_GOOGLE_REPOSITORY):$(TF_SA_LATEST_TAG)"
 
 ci-gcloud-configure-docker:
 	gcloud auth configure-docker -q ${TF_SA_GOOGLE_AR_REPO_URL}
 	@echo "configured gcloud for docker"
-
-# push to google container registry
-ci-gcr-push: ci-gcloud-configure-docker ci-gcr-build
-	docker push ${TF_SA_GOOGLE_REPOSITORY}:$(TF_SA_LATEST_TAG)
-	@echo "Deployed tagged image: $(TF_SA_GOOGLE_REPOSITORY):$(TF_SA_LATEST_TAG)"
 
 # alternatively - this could could be setup in terraform? The concern is if it gets deleted on destory/change
 ci-check-create-repository:
