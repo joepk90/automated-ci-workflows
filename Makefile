@@ -25,22 +25,7 @@ TF_SA_GOOGLE_REPOSITORY=${TF_SA_GOOGLE_AR_REPO_URL}/${TF_SA_GOOGLE_PROJECT_ID}/$
 TF_SA_DOCKER_REPOSITORY=$(TF_SA_DOCKER_REGISTRY)/$(TF_SA_DOCKER_IMAGE_NAME)
 TF_SA_LATEST_TAG=latest
 
-# work make file vars
-TF_SA_MAKEFILE_URL=https://raw.githubusercontent.com/joepk90/serverless-apps-ci-workflows/main/Makefile
-
-# duplicate variable (also defined in the shared-publish workflow)
-TF_SA_MAKEFILE_PATH=/tmp/Makefile
-
 ### CI COMMANDS
-
-# download makefile specifically designed for this workflowt to /tmp in system root (not the project dir)
-ci-download-makefile:
-	curl -L -o $(TF_SA_MAKEFILE_PATH) $(TF_SA_MAKEFILE_URL)
-
-# replace project makefile with makefile for ci workflow
-ci-replace-makefile:
-	rm Makefile
-	cp $(TF_SA_MAKEFILE_PATH) Makefile
 
 ci-docker-build:
 	docker build -t $(TF_SA_DOCKER_REPOSITORY) ./
