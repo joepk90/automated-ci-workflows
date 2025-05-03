@@ -48,6 +48,9 @@ jobs:
       - name: Docker Tag
         run: make ci-docker-tag
 
+      - name: Docker Login
+        run: make ci-docker-login
+
       - name: Docker Push
         run: make ci-docker-push
 

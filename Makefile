@@ -26,10 +26,6 @@ TF_SA_DOCKER_REPOSITORY=$(TF_SA_DOCKER_REGISTRY)/$(TF_SA_DOCKER_IMAGE_NAME)
 TF_SA_LATEST_TAG=latest
 
 ### CI COMMANDS
-ci-docker-auth:
-	@echo "Logging in to $(TF_SA_DOCKER_REGISTRY) as $(TF_SA_DOCKER_ID)"
-	@docker login -u $(TF_SA_DOCKER_ID) -p $(TF_SA_DOCKER_PASSWORD)
-
 ci-docker-build:
 	docker build -t $(TF_SA_DOCKER_REPOSITORY) ./
 	@echo "Created new image: $(TF_SA_DOCKER_REPOSITORY)"
@@ -40,7 +36,11 @@ ci-docker-tag:
 	@echo "Created new tagged image: $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)"
 	@echo "Created new tagged image: $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)"
 
-ci-docker-push: ci-docker-auth
+ci-docker-login:
+	@echo "Logging in to $(TF_SA_DOCKER_REGISTRY) as $(TF_SA_DOCKER_ID)"
+	@docker login -u $(TF_SA_DOCKER_ID) -p $(TF_SA_DOCKER_PASSWORD)
+
+ci-docker-push:
 	docker push $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)
 	docker push $(TF_SA_DOCKER_REPOSITORY):$(TF_SA_LATEST_TAG)
 	@echo "Deployed tagged image: $(TF_SA_DOCKER_REPOSITORY):$(COMMIT_SHA)"
