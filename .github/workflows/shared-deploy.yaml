@@ -33,6 +33,8 @@ env:
   # duplicate varaible (can we access the vars in the make file for this?)
   TF_SA_LATEST_TAG: "latest"
 
+  TF_SA_GOOGLE_REGION: "us-central1"
+
 jobs:
   deploy:
     name: Deployment
@@ -58,8 +60,8 @@ jobs:
         uses: "google-github-actions/deploy-cloudrun@v2"
         with:
           service: "${{ env.TF_SA_GOOGLE_CLOUD_RUN_SERVICE_NAME }}"
-          image: "us-central1-docker.pkg.dev/${{ env.TF_SA_GOOGLE_PROJECT_ID }}/containers/${{ env.TF_SA_DOCKER_IMAGE_NAME }}:${{ env.TF_SA_LATEST_TAG }}"
-          region: "us-central1"
+          image: "${{ env.TF_SA_GOOGLE_REGION }}-docker.pkg.dev/${{ env.TF_SA_GOOGLE_PROJECT_ID }}/containers/${{ env.TF_SA_DOCKER_IMAGE_NAME }}:${{ env.TF_SA_LATEST_TAG }}"
+          region: ${{ env.TF_SA_GOOGLE_REGION }}
           project_id: ${{ env.TF_SA_GOOGLE_PROJECT_ID }}
 
       - name: Show Output
