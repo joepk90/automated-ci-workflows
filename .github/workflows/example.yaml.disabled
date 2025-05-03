@@ -23,8 +23,9 @@ jobs:
     uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-publish.yaml@main"
     secrets: inherit
 
-  deploy:
-    name: Deploy
-    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@main"
-    needs: publish
-    secrets: inherit
+  # Enable once a Terraform service has been created.
+  # deploy:
+  #   name: Deploy
+  #   uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@main"
+  #   needs: publish
+  #   secrets: inherit
