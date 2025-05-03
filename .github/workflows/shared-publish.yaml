@@ -45,6 +45,9 @@ jobs:
       - name: Docker Build
         run: make ci-docker-build
 
+      - name: Docker Tag
+        run: make ci-docker-tag
+
       - name: Docker Push
         run: make ci-docker-push
 
@@ -58,6 +61,9 @@ jobs:
 
       - name: Check/Create Artifact Registry Repository
         run: make ci-check-create-repository
+
+      - name: GCR Tag
+        run: make ci-gcr-tag
 
       - name: GCR Push
         run: make ci-gcr-push
