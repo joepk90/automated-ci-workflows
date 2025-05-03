@@ -8,9 +8,10 @@ on:
       - master
 
   # if testing is required (create branch called ci-updates)
-  # push:
-  #   branches:
-  #     - ci-updates
+  push:
+    branches:
+      - main
+      # - ci-updates
 
 permissions:
   id-token: write # Required for OIDC authentication (workload identity provider)
@@ -19,5 +20,5 @@ permissions:
 jobs:
   deploy:
     name: Deploy
-    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@ci-updates"
+    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@main"
     secrets: inherit
