@@ -27,7 +27,8 @@ env:
   WORKLOAD_IDENTITY_PROVIDER: "projects/${{ secrets.TF_SA_GOOGLE_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ secrets.TF_SA_GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}"
   SERVICE_ACCOUNT_EMAIL: "${{ secrets.TF_SA_GOOGLE_SERVICE_ACCOUNT_EMAIL_USER_NAME }}@${{ secrets.TF_SA_GOOGLE_PROJECT_ID }}.iam.gserviceaccount.com"
 
-  TF_SA_MAKEFILE_URL: "https://raw.githubusercontent.com/joepk90/serverless-apps-ci-workflows/main/Makefile"
+  # duplicate variables (also in makefile)
+  TF_SA_MAKEFILE_PATH: "/tmp/Makefile"
 
 jobs:
   publish:
@@ -38,12 +39,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Download Makefile from - serverless-apps-ci-workflows
-        run: |
-          curl -L -o Makefile ${{ env.TF_SA_MAKEFILE_URL }}
+      # we download the make file to a /tmp directory initially in order to
+      # run the build keeping the with the projects makefile unchanged
+      - name: Download workflow Makefile from serverless-apps-ci-workflows
+        run: make ci-download-makefile
 
+      # run the build referencing the workflow Makefile
       - name: Docker Build
-        run: make ci-docker-build
+        run: make -f ${{ env.TF_SA_MAKEFILE_PATH }} ci-docker-build
+
+      # once the image has been built, replace the Makefile with the workflow Makefile so
+      # the other make commands be be called as usual
+      - name: Replace project Makefile with workflow Makefile
+        run: ci-replace-makefile
 
       - name: Docker Tag
         run: make ci-docker-tag
