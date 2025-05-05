@@ -1,29 +1,29 @@
-# Serverless Apps CI Workflows
+# Automated CI Workflows
 
-This repository is primarily intended for managing image publishing and deployments for the Terraform Project's Serverless Apps. While it might be adaptable for other projects, its main purpose has been to support this specific use case.
+The primary purpose of this repository is to manage workflows that can easily be reused across other projects.
 
-Due to the Terraform Project's use of a dedicated Service Account and a Workload Identity Provider, all deployments can be managed through a reusable workflow defined within this repository.
+This project is highly related to the [joepk90/terraform ](https://github.com/joepk90/terraform)project, and relied on some of the infrastructure set up in that repository. Due to the Terraform Project's use of a dedicated Service Account and a Workload Identity Provider, all deployments can be managed through a reusable workflow defined within this repository.
 
 # Setup Guide
-*During these steps, links to the serverless-apps-ci-workflows repository will be provided as examples*
+*During these steps, links to this repositories workflows will be provided as examples*
 
 ### Step 1: Configure Repository Settings
 In the GitHub repository you want to integrate with the Serverless Apps project and its automated workflows, add the required Secrets and Variables. Example links:
-- [Secrets](https://github.com/joepk90/serverless-apps-ci-workflows/settings/secrets/actions)
-- [Variables](https://github.com/joepk90/serverless-apps-ci-workflows/settings/variables/actions)
+- [Secrets](https://github.com/joepk90/automated-ci-workflows/settings/secrets/actions)
+- [Variables](https://github.com/joepk90/automated-ci-workflows/settings/variables/actions)
 
-*For details about the required secrets and variables, refer to the Serverless Apps Terraform project documentation in Google Drive.*
+*For details about the required secrets and variables, refer to the Automated CI Workflows project documentation in Google Drive.*
 
 
 ### Step 2: Set Up the Workflow
 In the target repository, configure the automated deployment workflow using the provided example file:
-- [Example Workflow File](https://github.com/joepk90/serverless-apps-ci-workflows/blob/main/.github/workflows/example.yaml.disabled)
+- [Example Workflow File](https://github.com/joepk90/automated-ci-workflows/blob/main/.github/workflows/example.yaml.disabled)
 
 
 At the root of your project, run the following commands to add the workflow and rename it to deploy.yaml:
 ```
 mkdir -p .github/workflows
-curl -L -o .github/workflows/deploy.yaml https://raw.githubusercontent.com/joepk90/serverless-apps-ci-workflows/main/.github/workflows/example.yaml.disabled
+curl -L -o .github/workflows/deploy.yaml https://raw.githubusercontent.com/joepk90/automated-ci-workflows/main/.github/workflows/example.yaml.disabled
 ```
 
 
