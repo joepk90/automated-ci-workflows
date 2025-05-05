@@ -20,5 +20,5 @@ permissions:
 jobs:
   publish:
     name: Publish
-    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-publish.yaml@main"
+    uses: "joepk90/automated-ci-workflows/.github/workflows/shared-publish.yaml@main"
     secrets: inherit

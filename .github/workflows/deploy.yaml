@@ -20,5 +20,5 @@ permissions:
 jobs:
   deploy:
     name: Deploy
-    uses: "joepk90/serverless-apps-ci-workflows/.github/workflows/shared-deploy.yaml@main"
+    uses: "joepk90/automated-ci-workflows/.github/workflows/shared-deploy.yaml@main"
     secrets: inherit
